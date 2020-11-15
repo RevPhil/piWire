@@ -127,7 +127,7 @@ if(Wire.endTransmission() < 0) perror("endTransmission");
 
 // read 3 Bytes from the target I2C address  
 int result = 0;  
-if(reault = Wire.requestFrom(TARGET_I2C,3) <0) perror("requestFrom");  
+if(result = Wire.requestFrom(TARGET_I2C,3) <0) perror("requestFrom");  
 if(result == 3) {  
 \_Byte1 = Wire.read();  
 \_Byte2 = Wire.read();  
