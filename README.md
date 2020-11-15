@@ -20,9 +20,9 @@ The following 'Master' commands are supported:
 	
 **int begin(void)**
 
-*Wire.begin();*
-
 Opens the 'i2c-1' port for reading and writing.
+
+*Wire.begin();*
 
 *returns* the filehandle if successful or an error number if unsuccessful.
 
@@ -103,3 +103,37 @@ Reads multiple Bytes from the RX buffer into a variable or array etc.
 *returns* the number of Bytes read or '-1' if the buffer end has been reached.
 
 *if(Wire.read(&data,sizeof(data)) < 0) printf("read failed!");*
+
+**example**
+
+\#include "piWire.h"
+
+\#define TARGET_I2C 0x55
+
+int main() {
+
+if(Wire.begin() < 0) perror("begin");
+
+uint8_t _Byte1 = 1;
+uint8_t _Byte2 = 2;
+uint8_t _Byte3 = 3;
+
+// write 3 Bytes to the target I2C address  
+if(Wire.beginTransmission(TARGET_I2C) < 0) perror("beginTransmission");  
+Wire.write(_Byte1);  
+Wire.write(_Byte2);  
+Wire.write(_Byte3);  
+if(Wire.endTransmission() < 0) perror("endTransmission");  
+
+// read 3 Bytes from the target I2C address. 
+int result = 0;  
+if(request = Wire.requestFrom(TARGET_I2C,3) <0) perror("requestFrom");  
+if(result == 3) {  
+\_Byte1 = Wire.read();  
+\_Byte2 = Wire.read();  
+\_Byte3 = Wire.read();  
+printf("Byte1 = %u\tByte2 = %u\tByte3 = %u\r\n",\_Byte1,\_Byte2,\_Byte3);  
+}  
+
+return 0;
+}
