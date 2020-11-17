@@ -59,6 +59,7 @@ int piWire::begin(void) {
 }
 
 // SEND //
+// bufferPointer is the number of Bytes in the buffer buffer + 1
 // prepare to send data to Slave
 void piWire::beginTransmission(int targetI2c) {
 	bufferPointer = 0;
@@ -71,22 +72,23 @@ void piWire::write(uint8_t data) {
 	if(bufferPointer < I2C_BUFFER_SIZE && transmitting) buffer[bufferPointer++] = data;
 }
 
+//?????????
 // write an array or variable to the Slave (buffer)
 void piWire::write(void *buf,int len) {
-	if(len > I2C_BUFFER_SIZE) len = I2C_BUFFER_SIZE;
+	// do we have enough room ion the TX buffer?
+	if((bufferPointer + len) >= I2C_BUFFER_SIZE ) return;
+	// if yes, add the data to the buffer
 	uint8_t* txBytes = reinterpret_cast<uint8_t*>(buf);
-	while(len--) {
-		write(*txBytes++);
-	}
+	while(len--) write(*txBytes++);
 }
 
 // send the buffered data to the Slave and end transmission
 int piWire::endTransmission(void) {
+	if(bufferPointer >= I2C_BUFFER_SIZE) bufferPointer = (I2C_BUFFER_SIZE);
 	if(!transmitting) return -1;
 	transmitting = false;
 	int result;
-	if ((result = ioctl(file_i2c, I2C_SLAVE, currentI2c)) < 0) return result;
-	if(bufferPointer > I2C_BUFFER_SIZE) bufferPointer = I2C_BUFFER_SIZE;
+	if ((result = ioctl(file_i2c, I2C_SLAVE, currentI2c)) < 0) return result;	
 	result = ::write(file_i2c, &buffer, bufferPointer);
 	bufferPointer = 0;
 	return result;
@@ -100,27 +102,20 @@ int piWire::requestFrom(int targetI2c, int numBytes) {
 	int result;
 	if(numBytes > I2C_BUFFER_SIZE) numBytes = I2C_BUFFER_SIZE;
 	if ((result = ioctl(file_i2c, I2C_SLAVE, targetI2c)) < 0) return result;
-	result = ::read(file_i2c, buffer, numBytes);
-	if(result != numBytes)	return -1;
-	bufferPointer = 0;
-	return result;
+	return ::read(file_i2c, buffer, numBytes);
 }
 
 // read a single Byte from the buffer
 int piWire::read(void) {
-	if(bufferPointer < I2C_BUFFER_SIZE)
+	if(bufferPointer >= I2C_BUFFER_SIZE) return -1;
 	return buffer[bufferPointer++];
-	else
-	return -1;
 }
 
 // read an array or variable from the buffer
 int piWire::read(void *buf, int numBytes) {
 	if(numBytes > I2C_BUFFER_SIZE) return -1;
 	uint8_t* rxBytes = reinterpret_cast<uint8_t*>(buf);
-	while(numBytes--) {
-		*rxBytes++ = read();
-	}
+	while(numBytes--) *rxBytes++ = read();
 	return numBytes;
 }
 

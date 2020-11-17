@@ -3,9 +3,9 @@
 
 piWire is a simple header file which provides a basic emulation of the Arduino 'Wire' library for the Raspberry Pi.
 
-The maximum Transmission length is 32 Bytes.
+The maximum Transmission length is 32 Bytes. The default object is 'Wire'.
 
-The default object is 'Wire'.
+**Please Note: There is a problem with certain 'Slave' devices which causes bit 7 of the first Byte requested from the 'Slave' to be lost or zeroed. This is obvious when the 'Slave' device is an Arduino board using the Arduino 'Wire' library. Test are ongoing to see if this caveat is present on other I2C devices such as the DS323x RTC devices etc. I believe the problem is the result of a I2C protocol mismatch.**
 
 The following 'Master' commands are supported:
 
