@@ -38,7 +38,7 @@ Prepares the I2C buffer for transmission to the 'target' I2C address.
 
 **void write(uint8_t data)**
 
-Writes single unsigned Bytes sequentially to the TX buffer (maximum 32 Bytes).
+Writes single unsigned Bytes sequentially to the TX buffer (maximum 64 Bytes).
 
 *uint8_t data = 0xAA;*_
 
@@ -60,7 +60,7 @@ Closes the TX buffer and sends the buffer contents to the I2C address specified 
 
 **int requestFrom(int targetI2c, int numBytes)**
 
-Requests the number of Bytes specified from the I2C address (maximum 32 Bytes).
+Requests the number of Bytes specified from the I2C address (maximum 64 Bytes).
 
 *Wire.requestFrom(0x55,4);*
 
