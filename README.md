@@ -12,11 +12,9 @@ The following 'Master' commands are supported:
 	int begin(void);
 	void beginTransmission(int targetI2c);
 	void write(uint8_t data);
-	void write(void *buf,int numBytes);
 	int endTransmission(void);
 	int requestFrom(int targetI2c, int numBytes);
 	int read(void);
-	int read(void *buf, int numBytes);
 	
 **int begin(void)**
 
@@ -45,16 +43,6 @@ Writes single unsigned Bytes sequentially to the TX buffer (maximum 32 Bytes).
 *uint8_t data = 0xAA;*_
 
 *Wire.write(data);*
-
-*returns* nothing.
-
-**void write(void *buf,int numBytes)**
-
-Writes multiple Bytes from a variable or array etc. to the buffer (maximum 32 Bytes).
-
-*float source = 12345.12345;*
-
-*Wire.write(&source,sizeof(source));*
 
 *returns* nothing.
 
@@ -90,19 +78,6 @@ Reads single sequential Bytes from the RX buffer.
 
 *returns* the Byte read or '-1' if the buffer end has been reached.
 
-*if(Wire.read() < 0) printf("read failed!");*
-
-**int read(void *buf, int numBytes)**
-
-Reads multiple Bytes from the RX buffer into a variable or array etc.
-
-*float data = 0.0;*
-
-*Wire.read(&data,sizeof(data));*
-
-*returns* the number of Bytes read or '-1' if the buffer end has been reached.
-
-*if(Wire.read(&data,sizeof(data)) < 0) printf("read failed!");*
 
 **example**
 

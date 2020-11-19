@@ -24,24 +24,22 @@
 */
 
 #include <iostream>
-#include <unistd.h>				//Needed for I2C port
-#include <fcntl.h>				//Needed for I2C port
+#include <unistd.h>			//Needed for I2C port
+#include <fcntl.h>			//Needed for I2C port
 #include <sys/ioctl.h>			//Needed for I2C port
 #include <linux/i2c-dev.h>		//Needed for I2C port
 #include <cerrno>
 
-#define I2C_BUFFER_SIZE 32
+#define I2C_BUFFER_SIZE 64
 
 class piWire {
 public:
 	int begin(void);
 	void beginTransmission(int targetI2c);
 	void write(uint8_t data);
-	void write(void *buf,int numBytes);
 	int endTransmission(void);
 	int requestFrom(int targetI2c, int numBytes);
 	int read(void);
-	int read(void *buf, int numBytes);
 	
 	uint8_t buffer[(I2C_BUFFER_SIZE + 1)];
 private:
@@ -72,15 +70,6 @@ void piWire::write(uint8_t data) {
 	if(bufferPointer < I2C_BUFFER_SIZE && transmitting) buffer[bufferPointer++] = data;
 }
 
-//?????????
-// write an array or variable to the Slave (buffer)
-void piWire::write(void *buf,int len) {
-	// do we have enough room ion the TX buffer?
-	if((bufferPointer + len) >= I2C_BUFFER_SIZE ) return;
-	// if yes, add the data to the buffer
-	uint8_t* txBytes = reinterpret_cast<uint8_t*>(buf);
-	while(len--) write(*txBytes++);
-}
 
 // send the buffered data to the Slave and end transmission
 int piWire::endTransmission(void) {
@@ -111,13 +100,6 @@ int piWire::read(void) {
 	return buffer[bufferPointer++];
 }
 
-// read an array or variable from the buffer
-int piWire::read(void *buf, int numBytes) {
-	if(numBytes > I2C_BUFFER_SIZE) return -1;
-	uint8_t* rxBytes = reinterpret_cast<uint8_t*>(buf);
-	while(numBytes--) *rxBytes++ = read();
-	return numBytes;
-}
 
 piWire Wire;	// default object
 
